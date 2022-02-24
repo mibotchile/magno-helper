@@ -76,9 +76,11 @@ exports.getUsers = (req, res) => {
       async.map(keys, (key, cb) => {
         client.hgetall(key, (error, value) => {
           if (error) return res.json({ status: 400, message: 'Something went wrong', error });
+          console.log(value);
           const user = {};
           user.userId = key;
           user.data = value;
+          
           cb(null, user);
         });
       }, (error, users) => {
