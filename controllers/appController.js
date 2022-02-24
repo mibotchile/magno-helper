@@ -38,22 +38,19 @@ exports.validateInput = (req, res, next) => {
 /*
 Function to Create User
 */
-exports.addUser = (req, res) => {
+exports.addMapfreCodDocum = (req, res) => {
   // Get the User Details
   const newUser = req.body;
-  newUser.id = md5(newUser.email);
+  newUser.cod_docum = md5(newUser.cod_docum);
   // Check if user exists
-  client.exists(newUser.id, (err, reply) => {
+  client.exists(newUser.cod_docum, (err, reply) => {
     if (reply === 1) {
-      return res.json({ status: 400, message: 'That user exists already', newUser });
+      return res.json({ status: 400, message: 'Este coddocum ya existe', newUser });
     }
     // Add New User
     client.hmset(
       newUser.id, [
-        'userId', newUser.id,
-        'email', newUser.email,
-        'name', newUser.name,
-        'age', newUser.age,
+        'data', newUser.data
       ]
       , (error, result) => {
         if (error) {

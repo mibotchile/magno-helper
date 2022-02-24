@@ -16,9 +16,9 @@ router.get(
 Route to Add New User.
 */
 router.post(
-  '/user/new',
-  appController.validateInput,
-  appController.addUser,
+  '/mapfre/new',
+  //appController.validateInput,
+  appController.addMapfreCodDocum,
 );
 
 
