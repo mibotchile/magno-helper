@@ -50,7 +50,7 @@ exports.addMapfreCodDocum = (req, res) => {
     // Add New User
     client.hmset(
       newUser.id, [
-        'data', newUser.data
+        'detail', newUser.data
       ]
       , (error, result) => {
         if (error) {
