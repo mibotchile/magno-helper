@@ -160,3 +160,15 @@ exports.deleteUser = (req, res) => {
   });
 };
 
+/*
+Function to Delete all mapfre
+*/
+exports.deleteAllMapfre = (req, res) => {
+  const { userId } = req.params;
+  client.flushdb((err, result) => {
+    if (err) {
+      return res.json({ status: 400, message: 'Something went wrong', err });
+    }
+    return res.json({ status: 200, message: 'BD Deleted', result });
+  });
+};

@@ -26,7 +26,7 @@ router.post(
 Route to get Each User
 */
 router.get(
-  '/user/:userId',
+  '/mapfre/:userId',
   appController.getUser,
 );
 
@@ -37,6 +37,14 @@ router.delete(
   '/user/:userId',
   appController.checkUserExists,
   appController.deleteUser,
+);
+
+/*
+Route to get Delete Each user
+*/
+router.delete(
+  '/mapfre', 
+  appController.deleteAllMapfre,
 );
 
 /*
