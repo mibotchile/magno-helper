@@ -98,7 +98,7 @@ Functioon to get each User
 */
 exports.getUser = (req, res) => {
   const { userId } = req.params;
-  client.hgetall(userId, (err, user) => {
+  client.hgetall(md5(userId), (err, user) => {
     if (err) {
       return res.json({ status: 400, message: 'Something went wrong', err });
     }
