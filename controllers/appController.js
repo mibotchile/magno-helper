@@ -41,7 +41,7 @@ Function to Create User
 exports.addMapfreCodDocum = (req, res) => {
   // Get the User Details
   const newUser = req.body;
-  newUser.cod_docum = md5(newUser.cod_docum);
+  newUser.id = md5(newUser.cod_docum);
   // Check if user exists
   client.exists(newUser.cod_docum, (err, reply) => {
     if (reply === 1) {
@@ -50,6 +50,7 @@ exports.addMapfreCodDocum = (req, res) => {
     // Add New User
     client.hmset(
       newUser.id, [
+        'cod_docum', newUser.cod_docum,
         'detail', JSON.stringify(newUser.data)
       ]
       , (error, result) => {
