@@ -1,69 +1,29 @@
-const express = require('express');
-
+const express = require("express");
 const router = express.Router();
-
-const appController = require('../controllers/appController');
-
-/*
-GET home page.
-*/
-router.get(
-  '/',
-  appController.getIndexPage,
-);
+const appController = require("../controllers/appController");
 
 /*
 Route to Add New User.
 */
 router.post(
-  '/mapfre/new',
+  "/mapfre/insert_clients",
   //appController.validateInput,
-  appController.addMapfreCodDocum,
+  appController.addMapfreCodDocum
 );
-
 
 /*
 Route to get Each User
 */
-router.get(
-  '/mapfre/:userId',
-  appController.getUser,
-);
-
-/*
-Route to get Delete Each user
-*/
-router.delete(
-  '/user/:userId',
-  appController.checkUserExists,
-  appController.deleteUser,
-);
-
-/*
-Route to get Delete Each user
-*/
-router.delete(
-  '/mapfre', 
-  appController.deleteAllMapfre,
-);
-
-/*
-Route to get Update user
-*/
-router.put(
-  '/user/:userId',
-  appController.validateInput,
-  appController.checkUserExists,
-  appController.updateUser,
-);
-
+router.get("/mapfre/:userId", appController.getUser);
 
 /*
 Route to get All user
 */
-router.get(
-  '/users',
-  appController.getUsers,
-);
+router.get("/mapfre_getClients", appController.getUsers);
+
+/*
+Route to get Delete All user
+*/
+router.delete("/mapfre_deleteClients", appController.deleteAllMapfre);
 
 module.exports = router;
