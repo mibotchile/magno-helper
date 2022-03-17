@@ -1,3 +1,5 @@
+const axios = require("axios");
+const https = require("https");
 // Require Redis Here
 const redis = require("redis");
 
@@ -10,12 +12,59 @@ const client = redis.createClient(
 const md5 = require("md5");
 const async = require("async");
 
+const baseUrlMagno = process.env.API_ESTRATEGIAS_URL;
+
+function getJsonData(req, res) {
+  const urlEndpoint = `${baseUrlMagno}/v1/external/redis/getData`;
+  const config = {
+    method: "get",
+    url: urlEndpoint,
+    httpsAgent: new https.Agent({ rejectUnauthorized: false }),
+  };
+
+  axios
+    .request(config)
+    .then(function (response) {
+      // console.log(response.data.data.length);
+      // return;
+      const jsonResponse = response.data;
+      let rows = jsonResponse.data;
+      console.log("total insertado---", rows.length);
+      for (let document_data of rows) {
+        document_data.data = document_data.data.map((poliza) => {
+          if (!poliza.ramo.toUpperCase().includes("AUTOMOVILES")) {
+            poliza = {
+              fecha_vcto: poliza.fecha_vcto,
+              nro_poliza: poliza.nro_poliza,
+              ramo: poliza.ramo,
+              monto_soles: poliza.monto_soles,
+              monto_dolares: poliza.monto_dolares,
+            };
+          }
+          return poliza;
+        });
+        //console.log(document_data);
+        addMapfreCodDocum(document_data, res);
+      }
+      return res.json({
+        status: 200,
+        message: "all data insert",
+      });
+    })
+    .catch(function (error) {
+      console.error(error);
+    });
+}
+
 /*
 Function to Create User
 */
-exports.addMapfreCodDocum = (req, res) => {
+function addMapfreCodDocum(document_data, res) {
   // Get the User Details
-  const newUser = req.body;
+  //const newUser = req.body;
+  const newUser = document_data;
+  // console.log("+++++++++++++++++++++", req);
+  // return;
   newUser.id = md5(newUser.cod_docum);
   // Check if user exists
   client.exists(newUser.cod_docum, (err, reply) => {
@@ -38,21 +87,15 @@ exports.addMapfreCodDocum = (req, res) => {
             error,
           });
         }
-        return res.json({
-          result,
-          status: 200,
-          message: "User Created",
-          newUser,
-        });
       }
     );
   });
-};
+}
 
 /*
 Function to get all Users
 */
-exports.getUsers = (req, res) => {
+function getUsers(req, res) {
   client.keys("*", (err, keys) => {
     if (err) {
       return res.json({ status: 400, message: "could not fetch users", err });
@@ -68,7 +111,7 @@ exports.getUsers = (req, res) => {
                 message: "Something went wrong",
                 error,
               });
-            console.log(value);
+            //console.log(value);
             const user = {};
             user.userId = key;
             user.data = value;
@@ -83,17 +126,18 @@ exports.getUsers = (req, res) => {
               message: "Something went wrong",
               error,
             });
+          console.log("Total consultado-----", users.length);
           res.json(users);
         }
       );
     }
   });
-};
+}
 
 /*
 Function to get each User
 */
-exports.getUser = (req, res) => {
+function getUser(req, res) {
   const { userId } = req.params;
   client.hgetall(md5(userId), (err, user) => {
     if (err) {
@@ -101,26 +145,26 @@ exports.getUser = (req, res) => {
     }
     return res.json(user);
   });
-};
+}
 
 // Middleware to check user exists before update and Delete
-exports.checkUserExists = (req, res, next) => {
-  const { userId } = req.params;
-  client.hgetall(userId, (err, user) => {
-    if (err) {
-      return res.json({ status: 400, message: "Something went wrong", err });
-    }
-    if (!user) {
-      return res.json({ status: 400, message: "Could not find that user" });
-    }
-    next();
-  });
-};
+// function checkUserExists(req, res, next) {
+//   const { userId } = req.params;
+//   client.hgetall(userId, (err, user) => {
+//     if (err) {
+//       return res.json({ status: 400, message: "Something went wrong", err });
+//     }
+//     if (!user) {
+//       return res.json({ status: 400, message: "Could not find that user" });
+//     }
+//     next();
+//   });
+// }
 
 /*
 Function to Delete all mapfre
 */
-exports.deleteAllMapfre = (req, res) => {
+function deleteAllMapfre(req, res) {
   const { userId } = req.params;
   client.flushdb((err, result) => {
     if (err) {
@@ -128,4 +172,12 @@ exports.deleteAllMapfre = (req, res) => {
     }
     return res.json({ status: 200, message: "BD Deleted", result });
   });
+}
+
+module.exports = {
+  deleteAllMapfre,
+  getJsonData,
+  addMapfreCodDocum,
+  getUsers,
+  getUser,
 };
