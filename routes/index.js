@@ -10,18 +10,18 @@ router.get("/findClientsToProcess", appController.getJsonData);
 
 /*Route to get All user*/
 router.get("/mapfre_getClients", appController.getUsers);
-// /*
-// Route to Add New User.
-// */
-// router.post(
-//   "/mapfre/insert_clients",
-//   //appController.validateInput,
-//   appController.addMapfreCodDocum
-// );
+/*
+Route to Add New User.
+*/
+router.post(
+  "/mapfre/insert_clients",
+  //appController.validateInput,
+  appController.addMapfreCodDocum
+);
 
-// /*
-// Route to get Each User
-// */
-// router.get("/mapfre/:userId", appController.getUser);
+/*
+Route to get Each User
+*/
+router.get("/mapfre/:userId", appController.getUser);
 
 module.exports = router;
