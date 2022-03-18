@@ -19,9 +19,9 @@ router.get("/mapfre_getClients", appController.getUsers);
 //   appController.addMapfreCodDocum
 // );
 
-// /*
-// Route to get Each User
-// */
-// router.get("/mapfre/:userId", appController.getUser);
+/*
+Route to get Each User
+*/
+router.get("/mapfre/:userId", appController.getUser);
 
 module.exports = router;
